@@ -1,0 +1,10 @@
+streamlit
+langchain
+langchain-google-genai
+google-generativeai
+python-dotenv
+streamlit-mic-recorder
+gTTS
+pygame
+SpeechRecognition
+pyaudio
