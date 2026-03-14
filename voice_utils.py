@@ -1,44 +1,39 @@
 import os
-from gtts import gTTS
+import json
 import tempfile
 import streamlit as st
-import io
+from vosk import Model, KaldiRecognizer
+import wave
 
-def text_to_speech(text: str):
-    """Converts text to speech and returns the audio file path or bytes."""
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-        tts = gTTS(text=text, lang='en')
-        tts.save(fp.name)
-        return fp.name
+# Load Vosk model from cache
+def load_model(model_path):
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model path {model_path} does not exist.")
+    model = Model(model_path)
+    return model
 
-def play_audio(audio_path_or_bytes):
-    """Plays audio in Streamlit."""
-    if isinstance(audio_path_or_bytes, str):
-        with open(audio_path_or_bytes, "rb") as f:
-            audio_bytes = f.read()
-    else:
-        audio_bytes = audio_path_or_bytes
-    
-    st.audio(audio_bytes, format="audio/mp3", autoplay=True)
+# Function to transcribe audio
+def transcribe_audio(model, audio_path):
+    wf = wave.open(audio_path, "rb")
+    rec = KaldiRecognizer(model, wf.getframerate())
+    results = []
+    while True:
+        data = wf.readframes(4000)
+        if len(data) == 0:
+            break
+        if rec.AcceptWaveform(data):
+            results.append(json.loads(rec.Result()))
+    # Final result
+    final_result = json.loads(rec.FinalResult())
+    results.append(final_result)
+    transcription = "".join([r.get('text', '') for r in results if 'text' in r])
+    return transcription
 
-def transcribe_audio(audio_bytes, model_name="gemini-2.0-flash"):
-    """Uses Gemini to transcribe audio bytes to text."""
-    import google.generativeai as genai
-    from dotenv import load_dotenv
-    load_dotenv()
-    
-    genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
-    model = genai.GenerativeModel(model_name)
-    
-    # Create the audio part
-    audio_part = {
-        "mime_type": "audio/wav",
-        "data": audio_bytes
-    }
-    
-    response = model.generate_content([
-        "Please transcribe this audio accurately. If it's silent, return an empty string. Only return the transcription.",
-        audio_part
-    ])
-    
-    return response.text.strip()
+# Function to play audio
+def play_audio(audio_path):
+    os.system(f"start {audio_path}")
+
+# Function for text to speech (implementation depends on specific TTS library)
+def text_to_speech(text):
+    # Replace with actual implementation
+    pass
