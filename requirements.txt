@@ -8,3 +8,4 @@ gTTS
 pygame
 SpeechRecognition
 pyaudio
+vosk

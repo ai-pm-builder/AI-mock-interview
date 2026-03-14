@@ -2,6 +2,8 @@
 
 An advanced AI-powered mock interview tool that uses voice for a realistic experience. It researches companies, generates targeted questions, and provides deep performance analysis.
 
+## This project has migrated from the Gemini Multimodal API to Vosk for Speech-to-Text capabilities.
+
 ## Features
 - **Company Research**: Automatically analyzes the company and job description using Gemini.
 - **Voice-First**: Listen to the interviewer speak and answer with your own voice.
@@ -12,7 +14,15 @@ An advanced AI-powered mock interview tool that uses voice for a realistic exper
 - Frontend: **Streamlit**
 - Logic: **LangChain** (integrated with Gemini API)
 - LLM: **Gemini 2.0 Flash**
-- Voice: **gTTS** (Text-to-Speech) & **Gemini Multimodal** (Speech-to-Text)
+- Voice: **gTTS** (Text-to-Speech) & **Vosk** (Speech-to-Text)
+
+
+## Open Source STT Migration
+The transition to Vosk for Speech-to-Text brings several benefits:
+- **Offline Capability:** Vosk can be used without an internet connection, making it suitable for various applications.
+- **Free to Use:** Vosk is open-source and does not incur costs like some proprietary services.
+- **Privacy:** By using Vosk, sensitive audio data remains local, enhancing user privacy.
+
 
 ## Setup
 1. **API Key**: Create a `.env` file in the root directory and add your Google API Key:
